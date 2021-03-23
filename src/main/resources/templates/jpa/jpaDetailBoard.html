@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>JPA를 활용한 게시판 글 상세 화면</title>
+
+<link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}">
+
+<script src="/js/jquery-3.5.1.js" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script src="/js/popper.js" th:src="@{/js/popper.js}"></script>
+<script src="/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+
+<script>
+	$(document).ready(function() {
+		var boardIdx = $("#boardIdx").val();
+		
+		$("#btnList").on("click", function() {
+			/* 아래의 두 개 중 하나 아무거나 해도 똑같은 결과 나옴 */
+			/* location.href="/jpa/board"; */
+			window.history.back(); // 얘로 설정하면, 조회수 카운트할 때 새로고침해야 조회수 올라간 거 보인다..!
+		});
+		
+		$("#btnEdit").on("click", function() {
+			$("#method").val("PUT");
+			
+			var frm = $("#frm")[0];
+			frm.action = "/jpa/board/" + boardIdx;
+			frm.submit();
+		});
+		
+		$("#btnDelete").on("click", function() {
+			$("#method").val("DELETE");
+			
+			var frm = $("#frm")[0];
+			frm.action = "/jpa/board/" + boardIdx;
+			frm.submit();
+		});
+	});
+</script>
+
+</head>
+<body>
+	<header class="container">
+		<div class="jumbotron">
+			<h1>JPA를 활용한 게시판 글 상세 화면</h1>
+		</div>
+	</header>
+	<main class="container">
+		<section class="row">
+			<article class="col-sm-8 mx-auto">
+				<form id="frm" method="POST">
+					<div class="input-group mb-3">
+						<div class="input-goup-prepend">
+							<span class="input-group-text">글제목</span>
+						</div>
+						<input type="text" class="form-control" name="title" th:value="${jpaBoard.title}">
+					</div>
+					
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text">작성자ID</span>
+						</div>
+						<input type="text" class="form-control" name="createdId" th:value="${jpaBoard.createdId}">
+					</div>
+					
+					<div class="form-group mb-3">
+						<label for="contents">글 내용</label>
+						<textarea rows="" cols="" class="form-control" name="contents" id="contents" th:text="${jpaBoard.contents}"></textarea>
+					</div>
+					<input type="hidden" id="boardIdx" name="boardIdx" th:value="${jpaBoard.boardIdx}">
+					<input type="hidden" id="method" name="_method">
+				</form>
+				
+				<!-- 파일업로드를 위한 추가 작성 -->
+				<div class="form-group">
+					<label for="files">첨부 파일</label>
+					<a th:each="list : ${jpaBoard.fileList}" th:href="@{/jpa/board/file(idx=${list.idx}, boardIdx=${jpaBoard.boardIdx})}" th:text="|${list.originalFileName} (${#numbers.formatInteger(list.fileSize/1000, 1, 'DEFAULT')} kb)|"></a>
+				</div>
+				
+				<div class="clearfix">
+					<a class="float-left btn btn-primary" id="btnList">목록으로</a>
+					<a class="float-right btn btn-success" id="btnEdit">수정하기</a>
+					<a class="float-right btn btn-danger" id="btnDelete">삭제하기</a>
+				</div>
+			</article>
+		</section>
+	</main>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
